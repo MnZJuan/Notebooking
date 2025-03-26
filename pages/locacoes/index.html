@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locações - Sistema de Locação</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        // ...existing styles from dashboard.html...
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex min-h-screen relative">
+        <!-- Overlay para mobile -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black opacity-50 z-20 hidden md:hidden"></div>
+
+        <!-- Menu Lateral -->
+        <aside id="sidebar" class="bg-gray-800 text-white w-64 space-y-6 py-7 px-2 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out z-30">
+            <!-- Código de menu padrão -->
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <div class="flex-1 flex flex-col min-w-0">
+            <!-- Header -->
+            <header class="bg-white shadow-md p-4 flex items-center justify-between">
+                <div class="flex items-center">
+                    <button id="mobile-toggle" class="md:hidden mr-4 text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-2xl font-semibold text-gray-800">Locações</h1>
+                </div>
+                <button onclick="openModal()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center">
+                    <i class="fas fa-plus mr-2"></i> Nova Locação
+                </button>
+            </header>
+
+            <!-- Área de Conteúdo Principal -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+                <div class="max-w-7xl mx-auto">
+                    <!-- Cards de Resumo -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-700">Locações Ativas</h3>
+                                <i class="fas fa-clipboard-list text-blue-500 text-2xl"></i>
+                            </div>
+                            <p class="text-3xl font-bold mt-4 text-gray-800">27</p>
+                            <p class="text-sm text-gray-500 mt-2">3 novas hoje</p>
+                        </div>
+                        <!-- Outros cards aqui -->
+                    </div>
+
+                    <!-- Filtros -->
+                    <div class="mb-6 flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <div class="relative">
+                                <input type="text" 
+                                       placeholder="Pesquisar locações..." 
+                                       class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <select class="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Status</option>
+                                <option value="ativo">Ativo</option>
+                                <option value="finalizado">Finalizado</option>
+                                <option value="atrasado">Atrasado</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de Locações -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aluno</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Série</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Equipamento/Grupo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Data</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <!-- Exemplo de linha -->
+                                <tr>
+                                    <td class="px-6 py-4">001</td>
+                                    <td class="px-6 py-4">João Silva</td>
+                                    <td class="px-6 py-4">9º Ano</td>
+                                    <td class="px-6 py-4">Notebook Dell #123</td>
+                                    <td class="px-6 py-4">10/03/2024</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Ativo
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 space-x-3">
+                                        <button class="text-blue-600 hover:text-blue-900">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-900">
+                                            <i class="fas fa-times-circle"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal de Nova Locação -->
+    <div id="modal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
+        <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
+        
+        <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
+            <div class="modal-content py-4 text-left px-6">
+                <div class="flex justify-between items-center pb-3">
+                    <p class="text-2xl font-bold">Nova Locação</p>
+                    <button onclick="closeModal()" class="modal-close cursor-pointer z-50">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <form class="space-y-4">
+                    <!-- Informações do Aluno -->
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Nome do Aluno</label>
+                        <input type="text" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Série</label>
+                        <input type="text" 
+                               required 
+                               placeholder="Digite a série do aluno"
+                               class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Seleção de Equipamento/Grupo -->
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Tipo de Locação</label>
+                        <div class="flex gap-4 mb-4">
+                            <label class="flex items-center">
+                                <input type="radio" name="locationType" value="equipment" class="mr-2">
+                                Equipamento Individual
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="locationType" value="group" class="mr-2">
+                                Grupo
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Campo dinâmico baseado na seleção -->
+                    <div id="equipmentField" class="hidden">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Equipamento</label>
+                        <select class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Selecione o equipamento</option>
+                            <!-- Equipamentos disponíveis serão carregados aqui -->
+                        </select>
+                    </div>
+
+                    <div id="groupField" class="hidden">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Grupo de Equipamentos</label>
+                        <select class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Selecione o grupo</option>
+                            <!-- Grupos disponíveis serão carregados aqui -->
+                        </select>
+                    </div>
+
+                    <div class="flex justify-end pt-2 space-x-4">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                            Registrar Locação
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initSidebar();
+            handleProfileImage('Admin User', '');
+            setActiveMenuItem('locacoes.html');
+
+            // Controle do tipo de locação
+            const typeInputs = document.querySelectorAll('input[name="locationType"]');
+            const equipmentField = document.getElementById('equipmentField');
+            const groupField = document.getElementById('groupField');
+
+            typeInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    if (this.value === 'equipment') {
+                        equipmentField.classList.remove('hidden');
+                        groupField.classList.add('hidden');
+                    } else {
+                        equipmentField.classList.add('hidden');
+                        groupField.classList.remove('hidden');
+                    }
+                });
+            });
+        });
+
+        // Funções do Modal
+        function openModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        // Fechar modal ao clicar fora
+        document.querySelector('.modal-overlay').addEventListener('click', closeModal);
+    </script>
+</body>
+</html>

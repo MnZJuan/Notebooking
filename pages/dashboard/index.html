@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema de Locação</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+    <style>
+        @media (max-width: 768px) {
+            .sidebar-opened {
+                transform: translateX(0) !important;
+            }
+        }
+        .profile-letter {
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background-color: #4B5563;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex min-h-screen relative">
+        <!-- Overlay para mobile -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black opacity-50 z-20 hidden md:hidden"></div>
+
+        <!-- Menu Lateral -->
+        <aside id="sidebar" class="bg-gray-800 text-white w-64 space-y-6 py-7 px-2 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out z-30">
+            <!-- Botão Toggle -->
+            <button id="sidebar-toggle" class="md:hidden absolute right-0 top-0 mt-4 -mr-12 bg-gray-800 p-2 rounded-r focus:outline-none focus:ring-2 focus:ring-gray-600">
+                <i class="fas fa-bars text-white"></i>
+            </button>
+
+            <!-- Perfil -->
+            <div class="flex flex-col items-center space-y-2 relative">
+                <div class="w-20 h-20 rounded-full overflow-hidden ring-2 ring-gray-300 bg-gray-600 flex items-center justify-center">
+                    <img id="profile-image" 
+                         src="" 
+                         alt="Foto Perfil" 
+                         class="w-full h-full object-cover">
+                    <span id="profile-letter" class="profile-letter"></span>
+                </div>
+                <div class="text-center">
+                    <h2 id="username-display" class="text-xl font-semibold">Nome Usuário</h2>
+                    <p class="text-gray-400 text-sm">Administrador</p>
+                </div>
+            </div>
+
+            <!-- Menu Items -->
+            <nav class="mt-6 space-y-2">
+                <a href="../dashboard/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 bg-gray-700 text-white hover:bg-gray-600">
+                    <i class="fas fa-home w-6"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="../equipamentos/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-laptop w-6"></i>
+                    <span>Equipamentos</span>
+                </a>
+                <a href="../locacoes/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-clipboard-list w-6"></i>
+                    <span>Locações</span>
+                </a>
+                <a href="../admin/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-user-shield w-6"></i>
+                    <span>Administração</span>
+                </a>
+                <a href="../configuracoes/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-cog w-6"></i>
+                    <span>Configurações</span>
+                </a>
+            </nav>
+
+            <!-- Botão Sair -->
+            <div class="absolute bottom-4 w-full px-2">
+                <a href="../../index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 text-red-400 hover:text-red-300">
+                    <i class="fas fa-sign-out-alt w-6"></i>
+                    <span>Sair</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <div class="flex-1 flex flex-col min-w-0">
+            <!-- Header -->
+            <header class="bg-white shadow-md p-4 flex items-center justify-between">
+                <div class="flex items-center">
+                    <button id="mobile-toggle" class="md:hidden mr-4 text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-2xl font-semibold text-gray-800">Dashboard</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-600">Bem-vindo(a)!</span>
+                </div>
+            </header>
+
+            <!-- Área de Conteúdo Principal -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+                <div class="max-w-7xl mx-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-700">Total Equipamentos</h3>
+                                <i class="fas fa-laptop text-blue-500 text-2xl"></i>
+                            </div>
+                            <p class="text-3xl font-bold mt-4 text-gray-800">150</p>
+                            <p class="text-sm text-gray-500 mt-2">12 adicionados este mês</p>
+                        </div>
+                        <!-- Repita o padrão para os outros cards -->
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script type="module" src="../../assets/js/components.js"></script>
+    <script type="module" src="../../assets/js/utils.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initSidebar();
+            handleProfileImage('Admin User', '');
+            setActiveMenuItem('dashboard');
+        });
+    </script>
+</body>
+</html>

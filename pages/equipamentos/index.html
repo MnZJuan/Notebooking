@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipamentos - Sistema de Locação</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media (max-width: 768px) {
+            .sidebar-opened {
+                transform: translateX(0) !important;
+            }
+        }
+        .profile-letter {
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background-color: #4B5563;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex min-h-screen relative">
+        <!-- Overlay para mobile -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black opacity-50 z-20 hidden md:hidden"></div>
+
+        <!-- Menu Lateral - Copiar exatamente o mesmo do dashboard.html -->
+        <aside id="sidebar" class="bg-gray-800 text-white w-64 space-y-6 py-7 px-2 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out z-30">
+            <!-- Código de menu padrão -->
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <div class="flex-1 flex flex-col min-w-0">
+            <!-- Header -->
+            <header class="bg-white shadow-md p-4 flex items-center justify-between">
+                <div class="flex items-center">
+                    <button id="mobile-toggle" class="md:hidden mr-4 text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-2xl font-semibold text-gray-800">Equipamentos</h1>
+                </div>
+                <button onclick="openModal()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center">
+                    <i class="fas fa-plus mr-2"></i> Novo Equipamento
+                </button>
+            </header>
+
+            <!-- Área de Conteúdo Principal -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+                <div class="max-w-7xl mx-auto">
+                    <!-- Cards de Resumo - Similar ao dashboard -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-700">Total de Equipamentos</h3>
+                                <i class="fas fa-laptop text-blue-500 text-2xl"></i>
+                            </div>
+                            <p class="text-3xl font-bold mt-4 text-gray-800">150</p>
+                            <p class="text-sm text-gray-500 mt-2">Ativos no sistema</p>
+                        </div>
+                        // ... outros cards de resumo aqui ...
+                    </div>
+
+                    <!-- Filtros e Pesquisa -->
+                    <div class="mb-6 flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <div class="relative">
+                                <input type="text" placeholder="Pesquisar equipamentos..." 
+                                    class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 flex-wrap">
+                            <select id="groupFilter" class="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Grupo</option>
+                            </select>
+                            <select class="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Tipo</option>
+                                <option value="notebook">Notebook</option>
+                                <option value="tablet">Tablet</option>
+                            </select>
+                            <select class="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Status</option>
+                                <option value="disponivel">Disponível</option>
+                                <option value="locado">Locado</option>
+                                <option value="manutencao">Em Manutenção</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de Equipamentos -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipamento</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grupo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <!-- Exemplo de linha -->
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">001</td>
+                                    <td class="px-6 py-4">Notebook Dell Latitude</td>
+                                    <td class="px-6 py-4">Notebook</td>
+                                    <td class="px-6 py-4">Laboratório 1</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Disponível
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 space-x-3">
+                                        <button class="text-blue-600 hover:text-blue-900">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="text-red-600 hover:text-red-900">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal de Cadastro -->
+    <div id="modal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
+        <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
+        
+        <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
+            <div class="modal-content py-4 text-left px-6">
+                <!-- Título -->
+                <div class="flex justify-between items-center pb-3">
+                    <p class="text-2xl font-bold">Novo Equipamento</p>
+                    <button onclick="closeModal()" class="modal-close cursor-pointer z-50">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <!-- Formulário -->
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">
+                            Nome do Equipamento
+                        </label>
+                        <input type="text" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">
+                            Tipo
+                        </label>
+                        <select class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="notebook">Notebook</option>
+                            <option value="tablet">Tablet</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">
+                            Grupo
+                        </label>
+                        <div class="flex gap-2">
+                            <input type="text" 
+                                   id="groupInput"
+                                   placeholder="Digite o nome do grupo" 
+                                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   list="groupsList">
+                            <datalist id="groupsList">
+                                <!-- Grupos serão adicionados aqui dinamicamente -->
+                            </datalist>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">Digite para criar um novo grupo ou selecione um existente</p>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">
+                            Número de Série
+                        </label>
+                        <input type="text" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">
+                            Descrição
+                        </label>
+                        <textarea class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3"></textarea>
+                    </div>
+                    <div class="flex justify-end pt-2 space-x-4">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Cancelar</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initSidebar();
+            handleProfileImage('Admin User', '');
+            setActiveMenuItem('equipamentos.html');
+
+            // Array para armazenar grupos (temporário, deve ser substituído por backend)
+            let groups = [];
+
+            // Função para adicionar novo grupo
+            function addGroup(groupName) {
+                if (!groups.includes(groupName)) {
+                    groups.push(groupName);
+                    updateGroupsUI();
+                }
+            }
+
+            // Atualizar UI com grupos
+            function updateGroupsUI() {
+                const datalist = document.getElementById('groupsList');
+                const filterSelect = document.getElementById('groupFilter');
+                
+                // Limpar opções existentes
+                datalist.innerHTML = '';
+                filterSelect.innerHTML = '<option value="">Grupo</option>';
+                
+                // Adicionar grupos aos elementos
+                groups.forEach(group => {
+                    // Adicionar ao datalist
+                    const option = document.createElement('option');
+                    option.value = group;
+                    datalist.appendChild(option);
+                    
+                    // Adicionar ao select de filtro
+                    const filterOption = document.createElement('option');
+                    filterOption.value = group;
+                    filterOption.textContent = group;
+                    filterSelect.appendChild(filterOption);
+                });
+            }
+
+            // Event listener para o formulário
+            document.querySelector('form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const groupInput = document.getElementById('groupInput');
+                if (groupInput.value.trim()) {
+                    addGroup(groupInput.value.trim());
+                }
+                // Continuar com o processo de salvar equipamento...
+            });
+        });
+
+        // Funções do Modal
+        function openModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        // Fechar modal ao clicar fora
+        document.querySelector('.modal-overlay').addEventListener('click', closeModal);
+    </script>
+</body>
+</html>
