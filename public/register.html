@@ -10,7 +10,7 @@
     <div class="min-h-screen flex items-center justify-center">
         <div class="bg-white p-8 rounded-lg shadow-md w-96">
             <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Cadastro</h2>
-            <form class="space-y-4">
+            <form class="space-y-4" id="registerForm">
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
                         Usuário
@@ -19,6 +19,15 @@
                            id="username" 
                            type="text" 
                            placeholder="Digite seu usuário">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="fullname">
+                        Nome Completo
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                           id="fullname" 
+                           type="text" 
+                           placeholder="Digite seu nome completo">
                 </div>
                 <div>
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
@@ -38,6 +47,7 @@
                            type="password" 
                            placeholder="********">
                 </div>
+                <div id="error" class="text-red-500 text-sm hidden"></div>
                 <div>
                     <button class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
                             type="submit">
@@ -52,5 +62,34 @@
             </div>
         </div>
     </div>
+
+    <script type="module" src="/js/api.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const errorDiv = document.getElementById('error');
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            
+            try {
+                submitBtn.disabled = true;
+                const userData = {
+                    username: document.getElementById('username').value,
+                    full_name: document.getElementById('fullname').value,
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value
+                };
+
+                const response = await api.register(userData);
+                if (response.message === 'Usuário criado com sucesso') {
+                    window.location.href = '/index.html?registered=true';
+                }
+            } catch (error) {
+                errorDiv.textContent = error.message || 'Erro ao registrar usuário';
+                errorDiv.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>

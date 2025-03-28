@@ -6,12 +6,9 @@
     <title>Locações - Sistema de Locação</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        // ...existing styles from dashboard.html...
-        .modal {
-            transition: opacity 0.25s ease;
-        }
-    </style>
+    <script src="/js/auth.js"></script>
+    <script type="module" src="/js/api.js"></script>
+    <script type="module" src="/assets/js/components.js"></script>
 </head>
 <body class="bg-gray-100">
     <div class="flex min-h-screen relative">
@@ -20,7 +17,54 @@
 
         <!-- Menu Lateral -->
         <aside id="sidebar" class="bg-gray-800 text-white w-64 space-y-6 py-7 px-2 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out z-30">
-            <!-- Código de menu padrão -->
+            <!-- Botão Toggle -->
+            <button id="sidebar-toggle" class="md:hidden absolute right-0 top-0 mt-4 -mr-12 bg-gray-800 p-2 rounded-r focus:outline-none focus:ring-2 focus:ring-gray-600">
+                <i class="fas fa-bars text-white"></i>
+            </button>
+
+            <!-- Perfil -->
+            <div class="flex flex-col items-center space-y-2 relative">
+                <div class="w-20 h-20 rounded-full overflow-hidden ring-2 ring-gray-300 bg-gray-600 flex items-center justify-center">
+                    <img id="profile-image" src="" alt="Foto Perfil" class="w-full h-full object-cover">
+                    <span id="profile-letter" class="profile-letter"></span>
+                </div>
+                <div class="text-center">
+                    <h2 id="username-display" class="text-xl font-semibold">Nome Usuário</h2>
+                    <p class="text-gray-400 text-sm">Administrador</p>
+                </div>
+            </div>
+
+            <!-- Menu Items -->
+            <nav class="mt-6 space-y-2">
+                <a href="/pages/dashboard/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-home w-6"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/pages/equipamentos/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-laptop w-6"></i>
+                    <span>Equipamentos</span>
+                </a>
+                <a href="/pages/locacoes/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 bg-gray-700 text-white hover:bg-gray-600">
+                    <i class="fas fa-clipboard-list w-6"></i>
+                    <span>Locações</span>
+                </a>
+                <a href="/pages/admin/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-user-shield w-6"></i>
+                    <span>Administração</span>
+                </a>
+                <a href="/pages/configuracoes/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-cog w-6"></i>
+                    <span>Configurações</span>
+                </a>
+            </nav>
+
+            <!-- Botão Sair -->
+            <div class="absolute bottom-4 w-full px-2">
+                <a href="/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 text-red-400 hover:text-red-300 btn-logout">
+                    <i class="fas fa-sign-out-alt w-6"></i>
+                    <span>Sair</span>
+                </a>
+            </div>
         </aside>
 
         <!-- Conteúdo Principal -->
@@ -33,7 +77,7 @@
                     </button>
                     <h1 class="text-2xl font-semibold text-gray-800">Locações</h1>
                 </div>
-                <button onclick="openModal()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center">
+                <button id="btn-new-rental" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center">
                     <i class="fas fa-plus mr-2"></i> Nova Locação
                 </button>
             </header>
@@ -43,34 +87,29 @@
                 <div class="max-w-7xl mx-auto">
                     <!-- Cards de Resumo -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                        <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
                             <div class="flex items-center justify-between">
                                 <h3 class="text-lg font-semibold text-gray-700">Locações Ativas</h3>
                                 <i class="fas fa-clipboard-list text-blue-500 text-2xl"></i>
                             </div>
-                            <p class="text-3xl font-bold mt-4 text-gray-800">27</p>
-                            <p class="text-sm text-gray-500 mt-2">3 novas hoje</p>
+                            <p id="locacoesAtivas" class="text-3xl font-bold mt-4 text-blue-600">--</p>
+                            <p class="text-sm text-gray-500 mt-2">Atualmente em andamento</p>
                         </div>
-                        <!-- Outros cards aqui -->
-                    </div>
-
-                    <!-- Filtros -->
-                    <div class="mb-6 flex flex-col md:flex-row gap-4">
-                        <div class="flex-1">
-                            <div class="relative">
-                                <input type="text" 
-                                       placeholder="Pesquisar locações..." 
-                                       class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-700">Locações Atrasadas</h3>
+                                <i class="fas fa-exclamation-circle text-red-500 text-2xl"></i>
                             </div>
+                            <p id="locacoesAtrasadas" class="text-3xl font-bold mt-4 text-red-600">--</p>
+                            <p class="text-sm text-gray-500 mt-2">Pendentes de devolução</p>
                         </div>
-                        <div class="flex gap-4">
-                            <select class="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Status</option>
-                                <option value="ativo">Ativo</option>
-                                <option value="finalizado">Finalizado</option>
-                                <option value="atrasado">Atrasado</option>
-                            </select>
+                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-700">Locações Finalizadas</h3>
+                                <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+                            </div>
+                            <p id="locacoesFinalizadas" class="text-3xl font-bold mt-4 text-green-600">--</p>
+                            <p class="text-sm text-gray-500 mt-2">Concluídas com sucesso</p>
                         </div>
                     </div>
 
@@ -79,37 +118,17 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aluno</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Série</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Equipamento/Grupo</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Data</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ações</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aluno/Professor</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipamento/Grupo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data de Início</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data de Devolução</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <!-- Exemplo de linha -->
-                                <tr>
-                                    <td class="px-6 py-4">001</td>
-                                    <td class="px-6 py-4">João Silva</td>
-                                    <td class="px-6 py-4">9º Ano</td>
-                                    <td class="px-6 py-4">Notebook Dell #123</td>
-                                    <td class="px-6 py-4">10/03/2024</td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            Ativo
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 space-x-3">
-                                        <button class="text-blue-600 hover:text-blue-900">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="text-red-600 hover:text-red-900">
-                                            <i class="fas fa-times-circle"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                            <tbody id="rental-list" class="bg-white divide-y divide-gray-200">
+                                <!-- Locações serão carregadas dinamicamente -->
                             </tbody>
                         </table>
                     </div>
@@ -121,7 +140,6 @@
     <!-- Modal de Nova Locação -->
     <div id="modal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
         <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
-        
         <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
             <div class="modal-content py-4 text-left px-6">
                 <div class="flex justify-between items-center pb-3">
@@ -130,106 +148,321 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-
-                <form class="space-y-4">
-                    <!-- Informações do Aluno -->
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Nome do Aluno</label>
-                        <input type="text" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Série</label>
-                        <input type="text" 
-                               required 
-                               placeholder="Digite a série do aluno"
-                               class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <!-- Seleção de Equipamento/Grupo -->
+                <form id="rentalForm" class="space-y-4">
                     <div>
                         <label class="block text-gray-700 text-sm font-bold mb-2">Tipo de Locação</label>
-                        <div class="flex gap-4 mb-4">
+                        <div class="flex gap-4">
                             <label class="flex items-center">
-                                <input type="radio" name="locationType" value="equipment" class="mr-2">
-                                Equipamento Individual
+                                <input type="radio" name="rentalType" value="individual" checked class="mr-2">
+                                Individual
                             </label>
                             <label class="flex items-center">
-                                <input type="radio" name="locationType" value="group" class="mr-2">
+                                <input type="radio" name="rentalType" value="group" class="mr-2">
                                 Grupo
                             </label>
                         </div>
                     </div>
-
-                    <!-- Campo dinâmico baseado na seleção -->
-                    <div id="equipmentField" class="hidden">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Equipamento</label>
-                        <select class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">Selecione o equipamento</option>
-                            <!-- Equipamentos disponíveis serão carregados aqui -->
+                    <div id="individualFields">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Aluno</label>
+                        <div class="flex gap-2">
+                            <input type="text" 
+                                   id="studentInput" 
+                                   placeholder="Digite o nome do aluno" 
+                                   class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   list="studentsList">
+                            <datalist id="studentsList">
+                                <!-- Sugestões de alunos serão carregadas dinamicamente -->
+                            </datalist>
+                        </div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2 mt-4">Equipamento</label>
+                        <select id="equipmentSelect" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <!-- Equipamentos serão carregados dinamicamente -->
                         </select>
                     </div>
-
-                    <div id="groupField" class="hidden">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">Grupo de Equipamentos</label>
-                        <select class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">Selecione o grupo</option>
-                            <!-- Grupos disponíveis serão carregados aqui -->
+                    <div id="groupFields" class="hidden">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Professor</label>
+                        <input type="text" 
+                               id="professorInput" 
+                               placeholder="Digite o nome do professor" 
+                               class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               list="professorsList">
+                        <datalist id="professorsList">
+                            <!-- Sugestões de professores serão carregadas dinamicamente -->
+                        </datalist>
+                        <label class="block text-gray-700 text-sm font-bold mb-2 mt-4">Grupo</label>
+                        <select id="groupSelect" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <!-- Grupos serão carregados dinamicamente -->
                         </select>
                     </div>
-
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Data de Início</label>
+                        <input type="date" id="startDate" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Data de Devolução</label>
+                        <input type="date" id="returnDate" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
                     <div class="flex justify-end pt-2 space-x-4">
-                        <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                            Registrar Locação
-                        </button>
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Cancelar</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Salvar</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <script src="js/components.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            initSidebar();
-            handleProfileImage('Admin User', '');
-            setActiveMenuItem('locacoes.html');
+    <script type="module">
+        import { initSidebar, setActiveMenuItem } from '/assets/js/components.js';
+        import { api } from '/js/api.js';
 
-            // Controle do tipo de locação
-            const typeInputs = document.querySelectorAll('input[name="locationType"]');
-            const equipmentField = document.getElementById('equipmentField');
-            const groupField = document.getElementById('groupField');
+        async function loadRentals() {
+            const tbody = document.getElementById('rental-list');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center text-gray-500">
+                        <i class="fas fa-spinner fa-spin"></i> Carregando...
+                    </td>
+                </tr>
+            `;
 
-            typeInputs.forEach(input => {
-                input.addEventListener('change', function() {
-                    if (this.value === 'equipment') {
-                        equipmentField.classList.remove('hidden');
-                        groupField.classList.add('hidden');
-                    } else {
-                        equipmentField.classList.add('hidden');
-                        groupField.classList.remove('hidden');
-                    }
-                });
+            try {
+                const rentals = await api.getRentals();
+                renderRentals(tbody, rentals);
+            } catch (error) {
+                console.error('Erro ao carregar locações:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center text-red-500">
+                            Erro ao carregar locações.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function renderRentals(tbody, rentals) {
+            if (rentals.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center text-gray-500">
+                            Nenhuma locação encontrada.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            rentals.forEach(rental => {
+                const personName = rental.rental_type === 'group' 
+                    ? rental.professor_name || '-' 
+                    : rental.student_name || '-';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="px-6 py-4">${rental.id}</td>
+                        <td class="px-6 py-4">${personName}</td>
+                        <td class="px-6 py-4">${rental.equipment_name || rental.group_name || '-'}</td>
+                        <td class="px-6 py-4">
+                            <span class="status-badge status-${rental.status}">
+                                ${getStatusLabel(rental.status)}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">${rental.start_date}</td>
+                        <td class="px-6 py-4">${rental.expected_return_date}</td>
+                        <td class="px-6 py-4 text-right">
+                            <button class="btn-primary" onclick="editRental('${rental.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-danger" onclick="confirmDeleteRental('${rental.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
             });
-        });
+        }
 
-        // Funções do Modal
-        function openModal() {
-            const modal = document.getElementById('modal');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            document.body.classList.add('overflow-hidden');
+        function getStatusLabel(status) {
+            switch (status) {
+                case 'ativo': return 'Ativo';
+                case 'atrasado': return 'Atrasado';
+                case 'finalizado': return 'Finalizado';
+                default: return status;
+            }
+        }
+
+        async function loadRentalStats() {
+            try {
+                const stats = await api.getRentalStats();
+                document.getElementById('locacoesAtivas').textContent = stats.ativas || 0;
+                document.getElementById('locacoesAtrasadas').textContent = stats.atrasadas || 0;
+                document.getElementById('locacoesFinalizadas').textContent = stats.finalizadas || 0;
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas de locações:', error);
+                alert('Erro ao carregar estatísticas de locações. Tente novamente mais tarde.');
+            }
+        }
+
+        async function loadStudentsAndEquipments() {
+            try {
+                console.log('Carregando dados de alunos, equipamentos, grupos e professores...');
+                const [students, equipments, groups, professors] = await Promise.all([
+                    api.getStudents(),
+                    api.getEquipments(),
+                    api.getEquipmentGroups(),
+                    api.getProfessors()
+                ]);
+
+                console.log('Dados carregados com sucesso:', {
+                    students: students.length,
+                    equipments: equipments.length,
+                    groups: groups.length,
+                    professors: professors.length
+                });
+
+                // Preencher o datalist de alunos
+                const studentsList = document.getElementById('studentsList');
+                studentsList.innerHTML = students.map(student => `<option value="${student.name}"></option>`).join('');
+
+                // Preencher o select de equipamentos
+                const equipmentSelect = document.getElementById('equipmentSelect');
+                if (equipments.length > 0) {
+                    equipmentSelect.innerHTML = equipments
+                        .filter(equipment => equipment.status === 'disponivel') // Apenas equipamentos disponíveis
+                        .map(equipment => `<option value="${equipment.id}">${equipment.name}</option>`).join('');
+                } else {
+                    equipmentSelect.innerHTML = '<option value="">Nenhum equipamento disponível</option>';
+                }
+
+                // Preencher o select de grupos
+                const groupSelect = document.getElementById('groupSelect');
+                if (groups.length > 0) {
+                    groupSelect.innerHTML = groups
+                        .map(group => `<option value="${group.id}">${group.name}</option>`).join('');
+                } else {
+                    groupSelect.innerHTML = '<option value="">Nenhum grupo disponível</option>';
+                }
+
+                // Preencher o datalist de professores
+                const professorsList = document.getElementById('professorsList');
+                professorsList.innerHTML = professors.map(professor => `<option value="${professor.name}"></option>`).join('');
+            } catch (error) {
+                console.error('Erro ao carregar dados em loadStudentsAndEquipments:', error.message || error);
+                alert('Erro ao carregar dados. Verifique sua conexão ou tente novamente mais tarde.');
+            }
+        }
+
+        function resetModal() {
+            // Limpar campos do formulário
+            const form = document.getElementById('rentalForm');
+            form.reset();
+
+            // Exibir campos de "individual" por padrão
+            document.getElementById('individualFields').classList.remove('hidden');
+            document.getElementById('groupFields').classList.add('hidden');
+
+            // Definir valores padrão
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('startDate').value = today;
+            document.getElementById('returnDate').value = today;
         }
 
         function closeModal() {
             const modal = document.getElementById('modal');
             modal.classList.add('opacity-0', 'pointer-events-none');
-            document.body.classList.remove('overflow-hidden');
+            resetModal(); // Limpar o modal ao fechar
         }
 
-        // Fechar modal ao clicar fora
-        document.querySelector('.modal-overlay').addEventListener('click', closeModal);
+        async function createRental(event) {
+            event.preventDefault();
+            const rentalType = document.querySelector('input[name="rentalType"]:checked').value;
+            const studentName = document.getElementById('studentInput').value;
+            const professorName = document.getElementById('professorInput').value;
+            const equipmentId = document.getElementById('equipmentSelect').value;
+            const groupId = document.getElementById('groupSelect').value;
+            const startDate = document.getElementById('startDate').value;
+            const returnDate = document.getElementById('returnDate').value;
+
+            try {
+                let studentId = null;
+                let professorId = null;
+
+                if (rentalType === 'individual') {
+                    const students = await api.getStudents();
+                    const student = students.find(s => s.name.toLowerCase() === studentName.toLowerCase());
+                    if (!student) {
+                        alert('Aluno não encontrado. Por favor, cadastre o aluno antes de continuar.');
+                        return;
+                    }
+                    studentId = student.id;
+                } else if (rentalType === 'group') {
+                    const professors = await api.getProfessors();
+                    const professor = professors.find(p => p.name.toLowerCase() === professorName.toLowerCase());
+                    if (!professor) {
+                        alert('Professor não encontrado. Por favor, cadastre o professor antes de continuar.');
+                        return;
+                    }
+                    professorId = professor.id;
+                }
+
+                await api.createRental({
+                    student_id: rentalType === 'individual' ? studentId : null,
+                    professor_id: rentalType === 'group' ? professorId : null,
+                    equipment_id: rentalType === 'individual' ? equipmentId : null,
+                    group_id: rentalType === 'group' ? groupId : null,
+                    start_date: startDate,
+                    expected_return_date: returnDate,
+                    rental_type: rentalType
+                });
+
+                alert('Locação criada com sucesso!');
+                closeModal();
+                await loadRentals();
+            } catch (error) {
+                console.error('Erro ao criar locação:', error);
+                alert('Erro ao criar locação. Verifique os dados e tente novamente.');
+            }
+        }
+
+        function setDefaultDates() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('startDate').value = today;
+            document.getElementById('returnDate').value = today;
+        }
+
+        function toggleRentalFields() {
+            const rentalType = document.querySelector('input[name="rentalType"]:checked').value;
+            document.getElementById('individualFields').classList.toggle('hidden', rentalType !== 'individual');
+            document.getElementById('groupFields').classList.toggle('hidden', rentalType !== 'group');
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!verificarAutenticacao()) {
+                return;
+            }
+
+            initSidebar();
+            setActiveMenuItem('locacoes');
+
+            document.getElementById('btn-new-rental').addEventListener('click', async () => {
+                const modal = document.getElementById('modal');
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                resetModal(); // Resetar o modal ao abrir
+                await loadStudentsAndEquipments();
+            });
+
+            document.querySelectorAll('input[name="rentalType"]').forEach(radio => {
+                radio.addEventListener('change', toggleRentalFields);
+            });
+
+            document.getElementById('rentalForm').addEventListener('submit', createRental);
+
+            await loadRentalStats();
+            await loadRentals();
+        });
+
+        window.closeModal = closeModal;
     </script>
 </body>
 </html>

@@ -27,15 +27,69 @@
             transition: opacity 0.25s ease;
         }
     </style>
+    <script src="/js/auth.js"></script>
+    <script type="module" src="/js/api.js"></script>
+    <script type="module" src="/assets/js/components.js"></script>
+    <script type="module" src="/assets/js/utils.js"></script>
 </head>
 <body class="bg-gray-100">
     <div class="flex min-h-screen relative">
         <!-- Overlay para mobile -->
         <div id="sidebar-overlay" class="fixed inset-0 bg-black opacity-50 z-20 hidden md:hidden"></div>
 
-        <!-- Menu Lateral - Copiar exatamente o mesmo do dashboard.html -->
+        <!-- Menu Lateral -->
         <aside id="sidebar" class="bg-gray-800 text-white w-64 space-y-6 py-7 px-2 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out z-30">
-            <!-- Código de menu padrão -->
+            <!-- Botão Toggle -->
+            <button id="sidebar-toggle" class="md:hidden absolute right-0 top-0 mt-4 -mr-12 bg-gray-800 p-2 rounded-r focus:outline-none focus:ring-2 focus:ring-gray-600">
+                <i class="fas fa-bars text-white"></i>
+            </button>
+
+            <!-- Perfil -->
+            <div class="flex flex-col items-center space-y-2 relative">
+                <div class="w-20 h-20 rounded-full overflow-hidden ring-2 ring-gray-300 bg-gray-600 flex items-center justify-center">
+                    <img id="profile-image" 
+                         src="" 
+                         alt="Foto Perfil" 
+                         class="w-full h-full object-cover">
+                    <span id="profile-letter" class="profile-letter"></span>
+                </div>
+                <div class="text-center">
+                    <h2 id="username-display" class="text-xl font-semibold">Nome Usuário</h2>
+                    <p class="text-gray-400 text-sm">Administrador</p>
+                </div>
+            </div>
+
+            <!-- Menu Items -->
+            <nav class="mt-6 space-y-2">
+                <a href="/pages/dashboard/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-home w-6"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/pages/equipamentos/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 bg-gray-700 text-white hover:bg-gray-600">
+                    <i class="fas fa-laptop w-6"></i>
+                    <span>Equipamentos</span>
+                </a>
+                <a href="/pages/locacoes/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-clipboard-list w-6"></i>
+                    <span>Locações</span>
+                </a>
+                <a href="/pages/admin/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-user-shield w-6"></i>
+                    <span>Administração</span>
+                </a>
+                <a href="/pages/configuracoes/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-cog w-6"></i>
+                    <span>Configurações</span>
+                </a>
+            </nav>
+
+            <!-- Botão Sair -->
+            <div class="absolute bottom-4 w-full px-2">
+                <a href="/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 text-red-400 hover:text-red-300 btn-logout">
+                    <i class="fas fa-sign-out-alt w-6"></i>
+                    <span>Sair</span>
+                </a>
+            </div>
         </aside>
 
         <!-- Conteúdo Principal -->
@@ -48,7 +102,7 @@
                     </button>
                     <h1 class="text-2xl font-semibold text-gray-800">Equipamentos</h1>
                 </div>
-                <button onclick="openModal()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center">
+                <button id="btn-new-equipment" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center">
                     <i class="fas fa-plus mr-2"></i> Novo Equipamento
                 </button>
             </header>
@@ -56,17 +110,37 @@
             <!-- Área de Conteúdo Principal -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
                 <div class="max-w-7xl mx-auto">
-                    <!-- Cards de Resumo - Similar ao dashboard -->
+                    <!-- Cards de Resumo -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <!-- Card Total de Equipamentos -->
                         <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
                             <div class="flex items-center justify-between">
                                 <h3 class="text-lg font-semibold text-gray-700">Total de Equipamentos</h3>
                                 <i class="fas fa-laptop text-blue-500 text-2xl"></i>
                             </div>
-                            <p class="text-3xl font-bold mt-4 text-gray-800">150</p>
-                            <p class="text-sm text-gray-500 mt-2">Ativos no sistema</p>
+                            <p id="totalEquipamentos" class="text-3xl font-bold mt-4 text-gray-800">--</p>
+                            <p class="text-sm text-gray-500 mt-2">Equipamentos cadastrados</p>
                         </div>
-                        // ... outros cards de resumo aqui ...
+
+                        <!-- Card Equipamentos Locados -->
+                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-700">Equipamentos Locados</h3>
+                                <i class="fas fa-exchange-alt text-yellow-500 text-2xl"></i>
+                            </div>
+                            <p id="equipamentosLocados" class="text-3xl font-bold mt-4 text-yellow-600">--</p>
+                            <p class="text-sm text-gray-500 mt-2">Atualmente em uso</p>
+                        </div>
+
+                        <!-- Card Equipamentos em Manutenção -->
+                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-700">Em Manutenção</h3>
+                                <i class="fas fa-tools text-orange-500 text-2xl"></i>
+                            </div>
+                            <p id="equipamentosManutencao" class="text-3xl font-bold mt-4 text-orange-600">--</p>
+                            <p class="text-sm text-gray-500 mt-2">Indisponíveis temporariamente</p>
+                        </div>
                     </div>
 
                     <!-- Filtros e Pesquisa -->
@@ -109,27 +183,8 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <!-- Exemplo de linha -->
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">001</td>
-                                    <td class="px-6 py-4">Notebook Dell Latitude</td>
-                                    <td class="px-6 py-4">Notebook</td>
-                                    <td class="px-6 py-4">Laboratório 1</td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            Disponível
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 space-x-3">
-                                        <button class="text-blue-600 hover:text-blue-900">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="text-red-600 hover:text-red-900">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                            <tbody id="equipment-list" class="bg-white divide-y divide-gray-200">
+                                <!-- Equipamentos serão carregados dinamicamente -->
                             </tbody>
                         </table>
                     </div>
@@ -158,13 +213,13 @@
                         <label class="block text-gray-700 text-sm font-bold mb-2">
                             Nome do Equipamento
                         </label>
-                        <input type="text" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" name="name" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
                         <label class="block text-gray-700 text-sm font-bold mb-2">
                             Tipo
                         </label>
-                        <select class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <select name="type" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="notebook">Notebook</option>
                             <option value="tablet">Tablet</option>
                         </select>
@@ -175,6 +230,7 @@
                         </label>
                         <div class="flex gap-2">
                             <input type="text" 
+                                   name="group"
                                    id="groupInput"
                                    placeholder="Digite o nome do grupo" 
                                    class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -189,13 +245,13 @@
                         <label class="block text-gray-700 text-sm font-bold mb-2">
                             Número de Série
                         </label>
-                        <input type="text" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" name="serial_number" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
                         <label class="block text-gray-700 text-sm font-bold mb-2">
                             Descrição
                         </label>
-                        <textarea class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3"></textarea>
+                        <textarea name="description" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3"></textarea>
                     </div>
                     <div class="flex justify-end pt-2 space-x-4">
                         <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Cancelar</button>
@@ -206,74 +262,226 @@
         </div>
     </div>
 
-    <script src="js/components.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            initSidebar();
-            handleProfileImage('Admin User', '');
-            setActiveMenuItem('equipamentos.html');
+    <script type="module">
+        import { initSidebar, setActiveMenuItem } from '/assets/js/components.js';
+        import { api } from '/js/api.js';
 
-            // Array para armazenar grupos (temporário, deve ser substituído por backend)
-            let groups = [];
+        async function loadEquipments(filters = {}) {
+            const tbody = document.getElementById('equipment-list');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center text-gray-500">
+                        <i class="fas fa-spinner fa-spin"></i> Carregando...
+                    </td>
+                </tr>
+            `;
 
-            // Função para adicionar novo grupo
-            function addGroup(groupName) {
-                if (!groups.includes(groupName)) {
-                    groups.push(groupName);
-                    updateGroupsUI();
+            try {
+                let equipments = await api.getEquipments();
+
+                // Aplicar filtros
+                if (filters.status) {
+                    equipments = equipments.filter(e => e.status === filters.status);
                 }
+                if (filters.type) {
+                    equipments = equipments.filter(e => e.type === filters.type);
+                }
+                if (filters.group_id) {
+                    equipments = equipments.filter(e => e.group_id === filters.group_id);
+                }
+                if (filters.search) {
+                    const search = filters.search.toLowerCase();
+                    equipments = equipments.filter(e =>
+                        e.name.toLowerCase().includes(search) ||
+                        (e.serial_number && e.serial_number.toLowerCase().includes(search))
+                    );
+                }
+
+                // Renderizar equipamentos
+                renderEquipments(tbody, equipments);
+            } catch (error) {
+                console.error('Erro ao carregar equipamentos:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-red-500">
+                            Erro ao carregar equipamentos.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function renderEquipments(tbody, equipments) {
+            if (equipments.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-gray-500">
+                            Nenhum equipamento encontrado.
+                        </td>
+                    </tr>
+                `;
+                return;
             }
 
-            // Atualizar UI com grupos
-            function updateGroupsUI() {
-                const datalist = document.getElementById('groupsList');
-                const filterSelect = document.getElementById('groupFilter');
-                
-                // Limpar opções existentes
-                datalist.innerHTML = '';
-                filterSelect.innerHTML = '<option value="">Grupo</option>';
-                
-                // Adicionar grupos aos elementos
-                groups.forEach(group => {
-                    // Adicionar ao datalist
-                    const option = document.createElement('option');
-                    option.value = group;
-                    datalist.appendChild(option);
-                    
-                    // Adicionar ao select de filtro
-                    const filterOption = document.createElement('option');
-                    filterOption.value = group;
-                    filterOption.textContent = group;
-                    filterSelect.appendChild(filterOption);
-                });
-            }
-
-            // Event listener para o formulário
-            document.querySelector('form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const groupInput = document.getElementById('groupInput');
-                if (groupInput.value.trim()) {
-                    addGroup(groupInput.value.trim());
-                }
-                // Continuar com o processo de salvar equipamento...
+            tbody.innerHTML = '';
+            equipments.forEach(equipment => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="px-6 py-4">${equipment.id}</td>
+                        <td class="px-6 py-4">${equipment.name}</td>
+                        <td class="px-6 py-4">${equipment.type}</td>
+                        <td class="px-6 py-4">${equipment.group_name || '-'}</td>
+                        <td class="px-6 py-4">
+                            <span class="status-badge status-${equipment.status}">
+                                ${getStatusLabel(equipment.status)}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <button class="btn-primary" onclick="editEquipment('${equipment.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-danger" onclick="confirmDeleteEquipment('${equipment.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
             });
-        });
+        }
 
-        // Funções do Modal
-        function openModal() {
-            const modal = document.getElementById('modal');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            document.body.classList.add('overflow-hidden');
+        function getStatusLabel(status) {
+            switch (status) {
+                case 'disponivel': return 'Disponível';
+                case 'locado': return 'Locado';
+                case 'manutencao': return 'Em Manutenção';
+                default: return status;
+            }
+        }
+
+        function resetForm() {
+            const form = document.querySelector('#modal form');
+            form.reset(); // Limpa todos os campos do formulário
         }
 
         function closeModal() {
             const modal = document.getElementById('modal');
             modal.classList.add('opacity-0', 'pointer-events-none');
-            document.body.classList.remove('overflow-hidden');
+            resetForm(); // Limpa o formulário ao fechar o modal
         }
 
-        // Fechar modal ao clicar fora
-        document.querySelector('.modal-overlay').addEventListener('click', closeModal);
+        async function createEquipment(event) {
+            event.preventDefault();
+            const form = event.target;
+            const name = form.querySelector('input[name="name"]').value.trim();
+            const type = form.querySelector('select[name="type"]').value.trim();
+            const groupInput = form.querySelector('input[name="group"]').value.trim();
+            const serialNumber = form.querySelector('input[name="serial_number"]').value.trim();
+            const description = form.querySelector('textarea[name="description"]').value.trim();
+
+            try {
+                // Verificar se os campos obrigatórios estão preenchidos
+                if (!name || !type) {
+                    alert('Por favor, preencha os campos obrigatórios: Nome e Tipo.');
+                    return;
+                }
+
+                // Obter o ID do grupo ou criar um novo grupo
+                let groupId = null;
+                if (groupInput) {
+                    const groups = await api.getEquipmentGroups();
+                    const existingGroup = groups.find(group => group.name.toLowerCase() === groupInput.toLowerCase());
+                    if (existingGroup) {
+                        groupId = existingGroup.id;
+                    } else {
+                        const newGroup = await api.createEquipmentGroup({ name: groupInput });
+                        groupId = newGroup.id;
+                    }
+                }
+
+                // Criar o equipamento
+                await api.createEquipment({
+                    name,
+                    type,
+                    serial_number: serialNumber || null,
+                    group_id: groupId,
+                    description: description || null,
+                    status: 'disponivel'
+                });
+
+                alert('Equipamento criado com sucesso!');
+                closeModal(); // Fecha o modal
+                await loadEquipments(); // Atualiza a lista de equipamentos
+            } catch (error) {
+                console.error('Erro ao criar equipamento:', error);
+                if (error.message.includes('Número de série já está em uso')) {
+                    alert('Erro: O número de série informado já está em uso por outro equipamento.');
+                } else {
+                    alert('Erro ao criar equipamento. Verifique os dados e tente novamente.');
+                }
+            }
+        }
+
+        async function loadEquipmentGroups() {
+            try {
+                const groups = await api.getEquipmentGroups();
+                const datalist = document.getElementById('groupsList');
+                datalist.innerHTML = ''; // Limpar sugestões existentes
+
+                groups.forEach(group => {
+                    const option = document.createElement('option');
+                    option.value = group.name; // Nome do grupo como sugestão
+                    datalist.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar grupos de equipamentos:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!verificarAutenticacao()) {
+                return;
+            }
+
+            initSidebar();
+            setActiveMenuItem('equipamentos');
+
+            document.getElementById('btn-new-equipment').addEventListener('click', () => {
+                const modal = document.getElementById('modal');
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+            });
+
+            document.querySelector('#modal form').addEventListener('submit', createEquipment);
+
+            document.querySelector('.modal-close').addEventListener('click', closeModal);
+            document.querySelector('button[type="button"]').addEventListener('click', closeModal);
+
+            // Carregar grupos de equipamentos para o campo de sugestão
+            await loadEquipmentGroups();
+
+            try {
+                const stats = await api.getEquipmentStats();
+                console.log('Estatísticas de equipamentos:', stats);
+
+                // Atualizar os cards com os dados retornados
+                document.getElementById('totalEquipamentos').textContent = stats.total || 0;
+                document.getElementById('equipamentosLocados').textContent = stats.locado || 0;
+                document.getElementById('equipamentosManutencao').textContent = stats.manutencao || 0;
+
+                // Carregar lista de equipamentos
+                await loadEquipments();
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+
+                // Exibir mensagem de erro apenas se os dados não forem carregados
+                const totalEquipamentos = document.getElementById('totalEquipamentos').textContent;
+                if (totalEquipamentos === '--') {
+                    alert('Erro ao carregar dados. Verifique sua conexão ou tente novamente mais tarde.');
+                }
+            }
+        });
+
+        // Exponha a função no escopo global
+        window.closeModal = closeModal;
     </script>
 </body>
 </html>

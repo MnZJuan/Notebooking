@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Sistema de Locação</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../../assets/css/styles.css">
     <style>
         @media (max-width: 768px) {
             .sidebar-opened {
@@ -56,23 +55,23 @@
 
             <!-- Menu Items -->
             <nav class="mt-6 space-y-2">
-                <a href="../dashboard/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 bg-gray-700 text-white hover:bg-gray-600">
+                <a href="/pages/dashboard/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 bg-gray-700 text-white hover:bg-gray-600">
                     <i class="fas fa-home w-6"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="../equipamentos/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                <a href="/pages/equipamentos/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
                     <i class="fas fa-laptop w-6"></i>
                     <span>Equipamentos</span>
                 </a>
-                <a href="../locacoes/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                <a href="/pages/locacoes/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
                     <i class="fas fa-clipboard-list w-6"></i>
                     <span>Locações</span>
                 </a>
-                <a href="../admin/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                <a href="/pages/admin/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
                     <i class="fas fa-user-shield w-6"></i>
                     <span>Administração</span>
                 </a>
-                <a href="../configuracoes/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                <a href="/pages/configuracoes/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
                     <i class="fas fa-cog w-6"></i>
                     <span>Configurações</span>
                 </a>
@@ -80,7 +79,7 @@
 
             <!-- Botão Sair -->
             <div class="absolute bottom-4 w-full px-2">
-                <a href="../../index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 text-red-400 hover:text-red-300">
+                <a href="/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 text-red-400 hover:text-red-300 btn-logout">
                     <i class="fas fa-sign-out-alt w-6"></i>
                     <span>Sair</span>
                 </a>
@@ -105,30 +104,173 @@
             <!-- Área de Conteúdo Principal -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
                 <div class="max-w-7xl mx-auto">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Cards do Dashboard -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                        <!-- Card Total Equipamentos -->
                         <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
                             <div class="flex items-center justify-between">
                                 <h3 class="text-lg font-semibold text-gray-700">Total Equipamentos</h3>
                                 <i class="fas fa-laptop text-blue-500 text-2xl"></i>
                             </div>
-                            <p class="text-3xl font-bold mt-4 text-gray-800">150</p>
-                            <p class="text-sm text-gray-500 mt-2">12 adicionados este mês</p>
+                            <p id="totalEquipamentos" class="text-3xl font-bold mt-4 text-gray-800">--</p>
+                            <p class="text-sm text-gray-500 mt-2">Sistema de Notebooking</p>
                         </div>
-                        <!-- Repita o padrão para os outros cards -->
+                        
+                        <!-- Card Equipamentos Disponíveis -->
+                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-700">Equipamentos Disponíveis</h3>
+                                <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+                            </div>
+                            <p id="equipamentosDisponiveis" class="text-3xl font-bold mt-4 text-green-600">--</p>
+                            <p class="text-sm text-gray-500 mt-2">Prontos para locação</p>
+                        </div>
+                        
+                        <!-- Card Equipamentos Locados -->
+                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-700">Equipamentos Locados</h3>
+                                <i class="fas fa-exchange-alt text-yellow-500 text-2xl"></i>
+                            </div>
+                            <p id="equipamentosLocados" class="text-3xl font-bold mt-4 text-yellow-600">--</p>
+                            <p class="text-sm text-gray-500 mt-2">Em uso atualmente</p>
+                        </div>
+                        
+                        <!-- Card Equipamentos em Manutenção -->
+                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-700">Em Manutenção</h3>
+                                <i class="fas fa-tools text-orange-500 text-2xl"></i>
+                            </div>
+                            <p id="equipamentosManutencao" class="text-3xl font-bold mt-4 text-orange-600">--</p>
+                            <p class="text-sm text-gray-500 mt-2">Indisponíveis temporariamente</p>
+                        </div>
+                        
+                        <!-- Card Locações Ativas -->
+                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-700">Locações Ativas</h3>
+                                <i class="fas fa-clipboard-list text-blue-500 text-2xl"></i>
+                            </div>
+                            <p id="locacoesAtivas" class="text-3xl font-bold mt-4 text-blue-600">--</p>
+                            <p class="text-sm text-gray-500 mt-2">Equipamentos em uso</p>
+                        </div>
+                        
+                        <!-- Card Locações com Atraso -->
+                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-700">Locações com Atraso</h3>
+                                <i class="fas fa-exclamation-circle text-red-500 text-2xl"></i>
+                            </div>
+                            <p id="locacoesAtrasadas" class="text-3xl font-bold mt-4 text-red-600">--</p>
+                            <p class="text-sm text-gray-500 mt-2">Pendentes de devolução</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Locações Recentes -->
+                    <div class="bg-white rounded-lg shadow-md mb-6">
+                        <div class="flex items-center justify-between p-4 border-b">
+                            <h3 class="text-lg font-semibold text-gray-700">Locações Recentes</h3>
+                            <a href="/pages/locacoes/index.html" class="text-sm text-blue-500 hover:text-blue-700">Ver Todas</a>
+                        </div>
+                        <div id="recent-rentals" class="divide-y">
+                            <div class="p-4 text-center text-gray-500">
+                                Carregando locações recentes...
+                            </div>
+                        </div>
                     </div>
                 </div>
             </main>
         </div>
     </div>
 
-    <script type="module" src="../../assets/js/components.js"></script>
-    <script type="module" src="../../assets/js/utils.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            initSidebar();
-            handleProfileImage('Admin User', '');
-            setActiveMenuItem('dashboard');
-        });
-    </script>
+    <script src="/js/auth.js"></script>
+    <script type="module" src="/js/api.js"></script>
+    <script type="module">
+    import { initSidebar, setActiveMenuItem } from '/assets/js/components.js';
+    import { api } from '/js/api.js';
+
+    document.addEventListener('DOMContentLoaded', async function() {
+        // Verificar autenticação
+        if (!verificarAutenticacao()) {
+            return;
+        }
+
+        initSidebar();
+        setActiveMenuItem('dashboard');
+
+        try {
+            console.log('Carregando dados do dashboard...');
+            const dashboardData = await api.getDashboardData();
+
+            // Atualizar os cards com os dados retornados
+            document.getElementById('totalEquipamentos').textContent = dashboardData.totalEquipamentos || 0;
+            document.getElementById('equipamentosDisponiveis').textContent = dashboardData.equipamentosDisponiveis || 0;
+            document.getElementById('equipamentosLocados').textContent = dashboardData.equipamentosLocados || 0;
+            document.getElementById('equipamentosManutencao').textContent = dashboardData.equipamentosManutencao || 0;
+            document.getElementById('locacoesAtivas').textContent = dashboardData.locacoesAtivas || 0;
+            document.getElementById('locacoesAtrasadas').textContent = dashboardData.locacoesAtrasadas || 0;
+
+            // Atualizar locações recentes
+            const recentRentalsContainer = document.getElementById('recent-rentals');
+            if (dashboardData.locacoesRecentes && dashboardData.locacoesRecentes.length > 0) {
+                recentRentalsContainer.innerHTML = '';
+                dashboardData.locacoesRecentes.forEach(rental => {
+                    const statusClass = getStatusClass(rental.status);
+                    const startDate = formatDate(rental.start_date);
+                    const returnDate = formatDate(rental.expected_return_date);
+
+                    recentRentalsContainer.innerHTML += `
+                        <div class="p-4 hover:bg-gray-50">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="font-semibold">${rental.student_name}</p>
+                                    <p class="text-sm text-gray-600">${rental.equipment_name || 'Locação em grupo'}</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium ${statusClass}">
+                                        ${getStatusLabel(rental.status)}
+                                    </span>
+                                    <p class="text-sm text-gray-500 mt-1">Início: ${startDate}</p>
+                                    <p class="text-sm text-gray-500">Devolução: ${returnDate}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                recentRentalsContainer.innerHTML = '<div class="p-4 text-center text-gray-500">Nenhuma locação ativa encontrada</div>';
+            }
+        } catch (error) {
+            console.error('Erro ao carregar dados do dashboard:', error);
+            alert('Erro ao carregar dados do dashboard. Tente novamente mais tarde.');
+        }
+    });
+
+    // Funções auxiliares
+    function getStatusClass(status) {
+        switch (status) {
+            case 'ativo': return 'bg-green-100 text-green-800';
+            case 'atrasado': return 'bg-red-100 text-red-800';
+            case 'finalizado': return 'bg-gray-100 text-gray-800';
+            default: return 'bg-blue-100 text-blue-800';
+        }
+    }
+
+    function getStatusLabel(status) {
+        switch (status) {
+            case 'ativo': return 'Ativo';
+            case 'atrasado': return 'Atrasado';
+            case 'finalizado': return 'Finalizado';
+            default: return status;
+        }
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('pt-BR');
+    }
+</script>
 </body>
 </html>
