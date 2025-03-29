@@ -16,7 +16,7 @@ Notebooking é um sistema de gerenciamento de locações de equipamentos, desenv
 ## Instalação
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/notebooking.git
+   git clone https://github.com/MnZJuan/notebooking.git
    cd notebooking
    ```
 
