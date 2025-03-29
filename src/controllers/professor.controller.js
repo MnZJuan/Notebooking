@@ -37,6 +37,40 @@ const professorController = {
                 res.status(500).json({ message: 'Erro ao criar professor' });
             }
         }
+    },
+
+    getProfessorStats: async (req, res) => {
+        try {
+            console.log('Iniciando consulta de estatísticas de professores...');
+
+            // Consulta SQL única para obter todas as estatísticas
+            const statsQuery = `
+                SELECT 
+                    (SELECT COUNT(*) FROM professors) AS total,
+                    (SELECT COUNT(*) FROM professors WHERE status = 'ativo') AS ativos,
+                    (SELECT COUNT(*) FROM professors WHERE status = 'inativo') AS inativos
+            `;
+
+            const result = await pool.query(statsQuery);
+
+            if (!result.rows || result.rows.length === 0) {
+                console.error('Nenhum dado retornado pela consulta de estatísticas.');
+                return res.status(500).json({ message: 'Erro ao buscar estatísticas de professores' });
+            }
+
+            // Retornar as estatísticas
+            const stats = result.rows[0];
+            console.log('Estatísticas de professores obtidas com sucesso:', stats);
+
+            res.json({
+                total: parseInt(stats.total, 10),
+                ativos: parseInt(stats.ativos, 10),
+                inativos: parseInt(stats.inativos, 10),
+            });
+        } catch (error) {
+            console.error('Erro ao buscar estatísticas de professores:', error);
+            res.status(500).json({ message: 'Erro ao buscar estatísticas de professores' });
+        }
     }
 };
 

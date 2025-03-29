@@ -324,18 +324,16 @@ export const api = {
     // Alunos
     getStudents: async () => {
         try {
-            const headers = obterHeadersAutorizados();
-            const response = await fetch(`${API_URL}/students`, {
+            const response = await fetch('/api/students', {
                 method: 'GET',
-                headers
+                headers: obterHeadersAutorizados(),
             });
-            
-            const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.message || 'Erro ao buscar alunos');
+                throw new Error('Erro ao obter lista de alunos');
             }
-            return data;
+            return await response.json();
         } catch (error) {
+            console.error('Erro em getStudents:', error);
             throw error;
         }
     },
@@ -382,15 +380,16 @@ export const api = {
             const response = await fetch(`${API_URL}/students`, {
                 method: 'POST',
                 headers,
-                body: JSON.stringify(studentData)
+                body: JSON.stringify(studentData),
             });
-            
+
             const data = await response.json();
             if (!response.ok) {
                 throw new Error(data.message || 'Erro ao criar aluno');
             }
             return data;
         } catch (error) {
+            console.error('Erro em createStudent:', error);
             throw error;
         }
     },
@@ -428,6 +427,26 @@ export const api = {
             }
             return data;
         } catch (error) {
+            throw error;
+        }
+    },
+
+    getStudentStats: async () => {
+        try {
+            const headers = obterHeadersAutorizados();
+            const response = await fetch(`${API_URL}/students/stats`, {
+                method: 'GET',
+                headers,
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro ao obter estatísticas de alunos');
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Erro em getStudentStats:', error);
             throw error;
         }
     },
@@ -474,5 +493,34 @@ export const api = {
             console.error('Erro na API createProfessor:', error);
             throw error;
         }
+    },
+
+    getProfessorStats: async () => {
+        try {
+            const headers = obterHeadersAutorizados();
+            const response = await fetch(`${API_URL}/professors/stats`, {
+                method: 'GET',
+                headers,
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro ao obter estatísticas de professores');
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Erro em getProfessorStats:', error);
+            throw error;
+        }
     }
 };
+
+// Adicionar a função obterHeadersAutorizados
+function obterHeadersAutorizados() {
+    const token = localStorage.getItem('token');
+    return {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+    };
+}

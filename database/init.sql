@@ -56,9 +56,10 @@ CREATE TABLE equipment (
 CREATE TABLE students (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    grade VARCHAR(20),
-    email VARCHAR(100) UNIQUE,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    grade VARCHAR(50),
     registration_number VARCHAR(50) UNIQUE,
+    status VARCHAR(20) DEFAULT 'ativo', -- Certifique-se de que esta coluna existe
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -69,6 +70,7 @@ CREATE TABLE professors (
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     department VARCHAR(100),
+    status VARCHAR(20) DEFAULT 'ativo', -- Certifique-se de que esta coluna existe
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

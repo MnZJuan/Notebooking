@@ -32,15 +32,17 @@ router.put('/rentals/update-overdue', rentalController.updateOverdueRentals);
 router.get('/rental-stats', rentalController.getRentalStats);
 
 // Rotas de Alunos
+router.get('/students/stats', studentController.getStudentStats); // Certifique-se de que esta rota está antes de /students/:id
 router.get('/students', studentController.getAllStudents);
 router.get('/students/search', studentController.searchStudents);
-router.get('/students/:id', studentController.getStudentById);
+router.get('/students/:id', studentController.getStudentById); // Rota genérica deve vir por último
 router.post('/students', studentController.createStudent);
 router.put('/students/:id', studentController.updateStudent);
 router.delete('/students/:id', studentController.deleteStudent);
 
 // Rotas de Professores
-router.get('/professors', professorController.getAllProfessors); // Remova o verifyToken temporariamente
+router.get('/professors/stats', professorController.getProfessorStats); // Definir antes de /professors/:id
+router.get('/professors', professorController.getAllProfessors);
 router.post('/professors', professorController.createProfessor);
 
 module.exports = router;

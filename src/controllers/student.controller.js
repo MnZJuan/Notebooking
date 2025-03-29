@@ -124,6 +124,40 @@ const studentController = {
             console.error('Erro ao buscar alunos:', error);
             res.status(500).json({ message: 'Erro ao buscar alunos' });
         }
+    },
+
+    getStudentStats: async (req, res) => {
+        try {
+            console.log('Iniciando consulta de estatísticas de alunos...');
+
+            // Consulta SQL única para obter todas as estatísticas
+            const statsQuery = `
+                SELECT 
+                    (SELECT COUNT(*) FROM students) AS total,
+                    (SELECT COUNT(*) FROM students WHERE status = 'ativo') AS ativos,
+                    (SELECT COUNT(*) FROM students WHERE status = 'inativo') AS inativos
+            `;
+
+            const result = await pool.query(statsQuery);
+
+            if (!result.rows || result.rows.length === 0) {
+                console.error('Nenhum dado retornado pela consulta de estatísticas.');
+                return res.status(500).json({ message: 'Erro ao buscar estatísticas de alunos' });
+            }
+
+            // Retornar as estatísticas
+            const stats = result.rows[0];
+            console.log('Estatísticas de alunos obtidas com sucesso:', stats);
+
+            res.json({
+                total: parseInt(stats.total, 10),
+                ativos: parseInt(stats.ativos, 10),
+                inativos: parseInt(stats.inativos, 10),
+            });
+        } catch (error) {
+            console.error('Erro ao buscar estatísticas de alunos:', error);
+            res.status(500).json({ message: 'Erro ao buscar estatísticas de alunos' });
+        }
     }
 };
 

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Professores - Sistema de Locação</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="flex min-h-screen relative">
+        <!-- Overlay para mobile -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black opacity-50 z-20 hidden md:hidden"></div>
+
+        <!-- Menu Lateral -->
+        <aside id="sidebar" class="bg-gray-800 text-white w-64 space-y-6 py-7 px-2 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out z-30">
+            <!-- Botão Toggle -->
+            <button id="sidebar-toggle" class="md:hidden absolute right-0 top-0 mt-4 -mr-12 bg-gray-800 p-2 rounded-r focus:outline-none focus:ring-2 focus:ring-gray-600">
+                <i class="fas fa-bars text-white"></i>
+            </button>
+
+            <!-- Perfil -->
+            <div class="flex flex-col items-center space-y-2 relative">
+                <div class="w-20 h-20 rounded-full overflow-hidden ring-2 ring-gray-300 bg-gray-600 flex items-center justify-center">
+                    <img id="profile-image" src="" alt="Foto Perfil" class="w-full h-full object-cover">
+                    <span id="profile-letter" class="profile-letter"></span>
+                </div>
+                <div class="text-center">
+                    <h2 id="username-display" class="text-xl font-semibold">Nome Usuário</h2>
+                    <p class="text-gray-400 text-sm">Administrador</p>
+                </div>
+            </div>
+
+            <!-- Menu Items -->
+            <nav class="mt-6 space-y-2">
+                <a href="/pages/dashboard/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-home w-6"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/pages/equipamentos/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-laptop w-6"></i>
+                    <span>Equipamentos</span>
+                </a>
+                <a href="/pages/locacoes/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-clipboard-list w-6"></i>
+                    <span>Locações</span>
+                </a>
+                <a href="/pages/alunos/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-user-graduate w-6"></i>
+                    <span>Cadastro de Alunos</span>
+                </a>
+                <a href="/pages/professores/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 bg-gray-700 text-white hover:bg-gray-600">
+                    <i class="fas fa-chalkboard-teacher w-6"></i>
+                    <span>Cadastro de Professores</span>
+                </a>
+                <a href="/pages/admin/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-user-shield w-6"></i>
+                    <span>Administração</span>
+                </a>
+                <a href="/pages/configuracoes/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
+                    <i class="fas fa-cog w-6"></i>
+                    <span>Configurações</span>
+                </a>
+            </nav>
+
+            <!-- Botão Sair -->
+            <div class="absolute bottom-4 w-full px-2">
+                <a href="/index.html" class="flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 text-red-400 hover:text-red-300 btn-logout">
+                    <i class="fas fa-sign-out-alt w-6"></i>
+                    <span>Sair</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <div class="flex-1 flex flex-col min-w-0">
+            <!-- Header -->
+            <header class="bg-white shadow-md p-4 flex items-center justify-between">
+                <div class="flex items-center">
+                    <button id="mobile-toggle" class="md:hidden mr-4 text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-2xl font-semibold text-gray-800">Cadastro de Professores</h1>
+                </div>
+                <button id="btn-new-professor" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center">
+                    <i class="fas fa-plus mr-2"></i> Cadastrar Professor
+                </button>
+            </header>
+
+            <!-- Área de Conteúdo Principal -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+                <div class="max-w-7xl mx-auto">
+                    <!-- Cards de Resumo -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-700">Total de Professores</h3>
+                                <i class="fas fa-chalkboard-teacher text-blue-500 text-2xl"></i>
+                            </div>
+                            <p id="totalProfessores" class="text-3xl font-bold mt-4 text-gray-800">--</p>
+                            <p class="text-sm text-gray-500 mt-2">Cadastrados no sistema</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-700">Professores Ativos</h3>
+                                <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+                            </div>
+                            <p id="professoresAtivos" class="text-3xl font-bold mt-4 text-green-600">--</p>
+                            <p class="text-sm text-gray-500 mt-2">Atualmente ativos</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-700">Professores Inativos</h3>
+                                <i class="fas fa-user-slash text-red-500 text-2xl"></i>
+                            </div>
+                            <p id="professoresInativos" class="text-3xl font-bold mt-4 text-red-600">--</p>
+                            <p class="text-sm text-gray-500 mt-2">Não ativos no momento</p>
+                        </div>
+                    </div>
+
+                    <!-- Barra de Filtros e Pesquisa -->
+                    <div class="mb-6 flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <div class="relative">
+                                <input type="text" id="searchInput" placeholder="Pesquisar professores..." 
+                                    class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 flex-wrap">
+                            <select id="departmentFilter" class="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Departamento</option>
+                                <option value="Matemática">Matemática</option>
+                                <option value="História">História</option>
+                                <option value="Física">Física</option>
+                                <option value="Química">Química</option>
+                                <option value="Biologia">Biologia</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de Professores -->
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">E-mail</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departamento</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="professor-list" class="bg-white divide-y divide-gray-200">
+                                <!-- Professores serão carregados dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal de Cadastro -->
+    <div id="modal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
+        <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
+        <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto">
+            <div class="modal-content py-4 text-left px-6">
+                <div class="flex justify-between items-center pb-3">
+                    <p class="text-2xl font-bold">Cadastrar Professor</p>
+                    <button onclick="closeModal()" class="modal-close cursor-pointer z-50">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="professorForm" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Nome Completo</label>
+                        <input type="text" id="name" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">E-mail</label>
+                        <input type="email" id="email" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Departamento</label>
+                        <input type="text" id="department" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="flex justify-end pt-2 space-x-4">
+                        <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Cancelar</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { api } from '/js/api.js';
+
+        async function loadProfessorStats() {
+            try {
+                const stats = await api.getProfessorStats();
+
+                // Atualizar os valores dos cards
+                document.getElementById('totalProfessores').textContent = stats.total || 0;
+                document.getElementById('professoresAtivos').textContent = stats.ativos || 0;
+                document.getElementById('professoresInativos').textContent = stats.inativos || 0;
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas de professores:', error);
+                alert('Erro ao carregar estatísticas. Tente novamente mais tarde.');
+            }
+        }
+
+        async function loadProfessors(filters = {}) {
+            const tbody = document.getElementById('professor-list');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center text-gray-500">
+                        <i class="fas fa-spinner fa-spin"></i> Carregando...
+                    </td>
+                </tr>
+            `;
+
+            try {
+                let professors = await api.getProfessors();
+
+                // Aplicar filtros
+                if (filters.search) {
+                    const search = filters.search.toLowerCase();
+                    professors = professors.filter(professor =>
+                        professor.name.toLowerCase().includes(search) ||
+                        professor.email.toLowerCase().includes(search)
+                    );
+                }
+                if (filters.department) {
+                    professors = professors.filter(professor => professor.department === filters.department);
+                }
+
+                renderProfessors(tbody, professors);
+            } catch (error) {
+                console.error('Erro ao carregar professores:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-red-500">
+                            Erro ao carregar professores.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function renderProfessors(tbody, professors) {
+            if (professors.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-gray-500">
+                            Nenhum professor encontrado.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            professors.forEach(professor => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="px-6 py-4">${professor.id}</td>
+                        <td class="px-6 py-4">${professor.name}</td>
+                        <td class="px-6 py-4">${professor.email}</td>
+                        <td class="px-6 py-4">${professor.department || '-'}</td>
+                        <td class="px-6 py-4 text-right">
+                            <button class="btn-primary" onclick="editProfessor('${professor.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-danger" onclick="confirmDeleteProfessor('${professor.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('professorForm').reset();
+        }
+
+        async function createProfessor(event) {
+            event.preventDefault();
+            const form = event.target;
+            const professorData = {
+                name: form.querySelector('#name').value.trim(),
+                email: form.querySelector('#email').value.trim(),
+                department: form.querySelector('#department').value.trim()
+            };
+
+            try {
+                await api.createProfessor(professorData);
+                alert('Professor cadastrado com sucesso!');
+                closeModal();
+                await loadProfessors();
+            } catch (error) {
+                console.error('Erro ao cadastrar professor:', error);
+                alert('Erro ao cadastrar professor. Verifique os dados e tente novamente.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            document.getElementById('btn-new-professor').addEventListener('click', () => {
+                const modal = document.getElementById('modal');
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+            });
+
+            document.getElementById('professorForm').addEventListener('submit', createProfessor);
+
+            document.getElementById('searchInput').addEventListener('input', async (e) => {
+                const search = e.target.value;
+                const department = document.getElementById('departmentFilter').value;
+                await loadProfessors({ search, department });
+            });
+
+            document.getElementById('departmentFilter').addEventListener('change', async (e) => {
+                const department = e.target.value;
+                const search = document.getElementById('searchInput').value;
+                await loadProfessors({ search, department });
+            });
+
+            // Carregar estatísticas e lista de professores
+            await loadProfessorStats();
+            await loadProfessors();
+        });
+
+        window.closeModal = closeModal;
+    </script>
+</body>
+</html>
